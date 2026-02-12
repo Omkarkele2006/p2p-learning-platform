@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api/axios';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,26 +16,69 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/auth/register', formData);
+      const res = await axios.post(`${API_URL}/auth/register`, formData);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data));
-      alert('Registration Successful!');
       navigate('/dashboard');
     } catch (err) {
-      alert(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || 'Registration failed');
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', textAlign: 'center' }}>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input type="text" name="name" placeholder="Full Name" onChange={handleChange} required style={{ padding: '10px' }}/>
-        <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={{ padding: '10px' }}/>
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} required style={{ padding: '10px' }}/>
-        <button type="submit" style={{ padding: '10px', background: 'green', color: 'white', border: 'none' }}>Register</button>
-      </form>
-      <p>Already have an account? <Link to="/login">Login</Link></p>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <h2 className="auth-title" style={{ color: '#1e1b4b' }}>Create Account</h2>
+        <p className="auth-subtitle">Join the community today</p>
+        
+        {error && <div className="error-box">{error}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="input-group">
+            <input 
+              type="text" 
+              name="name" 
+              placeholder=" " 
+              className="form-input"
+              onChange={handleChange} 
+              required 
+            />
+            <label>Full Name</label>
+          </div>
+
+          <div className="input-group">
+            <input 
+              type="email" 
+              name="email" 
+              placeholder=" " 
+              className="form-input"
+              onChange={handleChange} 
+              required 
+            />
+            <label>Email Address</label>
+          </div>
+
+          <div className="input-group">
+            <input 
+              type="password" 
+              name="password" 
+              placeholder=" " 
+              className="form-input"
+              onChange={handleChange} 
+              required 
+            />
+            <label>Password</label>
+          </div>
+
+          <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+            Sign Up
+          </button>
+        </form>
+
+        <p className="bottom-text">
+          Already have an account? <Link to="/login">Sign In</Link>
+        </p>
+      </div>
     </div>
   );
 };

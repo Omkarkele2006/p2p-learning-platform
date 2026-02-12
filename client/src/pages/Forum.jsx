@@ -5,9 +5,9 @@ const Forum = () => {
   const [discussions, setDiscussions] = useState([]);
   const [newPost, setNewPost] = useState({ title: '', content: '' });
   const [replyText, setReplyText] = useState('');
-  const [activeDiscussion, setActiveDiscussion] = useState(null); // Which thread is open?
+  const [activeDiscussion, setActiveDiscussion] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // 1. Fetch Discussions
   const fetchDiscussions = async () => {
     try {
       const { data } = await api.get('/discussions');
@@ -19,91 +19,147 @@ const Forum = () => {
 
   useEffect(() => { fetchDiscussions(); }, []);
 
-  // 2. Create Post
   const handlePostSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await api.post('/discussions', newPost);
-      alert('Discussion Started!');
       setNewPost({ title: '', content: '' });
       fetchDiscussions();
     } catch (err) {
       alert('Failed to post');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 3. Handle Reply
   const handleReplySubmit = async (id) => {
+    if (!replyText.trim()) return;
     try {
       await api.post(`/discussions/${id}/reply`, { text: replyText });
-      alert('Reply added!');
       setReplyText('');
-      fetchDiscussions(); // Refresh to see new reply
+      fetchDiscussions();
     } catch (err) {
       alert('Failed to reply');
     }
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>💬 Discussion Forum</h1>
+    <div className="container" style={{ maxWidth: '900px' }}>
+      <div style={{ marginBottom: '30px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', color: '#1e1b4b' }}>Community Forum 💬</h1>
+        <p style={{ color: '#6b7280' }}>Ask questions, discuss topics, and help peers.</p>
+      </div>
 
-      {/* New Post Form */}
-      <div style={{ background: '#eef', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h3>Ask the Community</h3>
+      {/* New Post Input */}
+      <div className="glass-panel" style={{ marginBottom: '40px', borderLeft: '4px solid #6366f1' }}>
+        <h3 style={{ marginBottom: '15px' }}>Start a Discussion</h3>
         <input 
-          placeholder="Topic Title" 
+          className="form-input"
+          placeholder="What's the topic?" 
           value={newPost.title} 
           onChange={(e) => setNewPost({...newPost, title: e.target.value})} 
-          style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
         />
         <textarea 
-          placeholder="What's on your mind?" 
+          className="form-input"
+          placeholder="Elaborate on your question..." 
           value={newPost.content} 
           onChange={(e) => setNewPost({...newPost, content: e.target.value})} 
-          style={{ width: '100%', padding: '8px', height: '80px', marginBottom: '10px' }}
+          style={{ height: '100px', resize: 'vertical' }}
         />
-        <button onClick={handlePostSubmit} style={{ background: 'purple', color: 'white', padding: '10px', border: 'none' }}>
-          Post Discussion
-        </button>
+        <div style={{ textAlign: 'right' }}>
+          <button onClick={handlePostSubmit} className="btn btn-primary" disabled={loading}>
+            {loading ? 'Posting...' : 'Post Discussion'}
+          </button>
+        </div>
       </div>
 
       {/* Discussion List */}
-      <div>
-        {discussions.map((d) => (
-          <div key={d._id} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', borderRadius: '8px' }}>
-            <h3 style={{ cursor: 'pointer', color: 'darkblue' }} onClick={() => setActiveDiscussion(activeDiscussion === d._id ? null : d._id)}>
-              {d.title} {activeDiscussion === d._id ? '🔼' : '🔽'}
-            </h3>
-            <p>{d.content}</p>
-            <small>Posted by: {d.author?.name || 'User'}</small>
-
-            {/* Replies Section (Only shows if active) */}
-            {activeDiscussion === d._id && (
-              <div style={{ marginTop: '15px', paddingLeft: '20px', borderLeft: '3px solid #ddd' }}>
-                <h4>Replies:</h4>
-                {d.replies.map((r, idx) => (
-                  <p key={idx} style={{ background: '#f9f9f9', padding: '5px' }}>
-                    <strong>User:</strong> {r.text}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {discussions.map((d) => {
+          const isActive = activeDiscussion === d._id;
+          return (
+            <div 
+              key={d._id} 
+              className="glass-panel" 
+              style={{ 
+                padding: '0', 
+                overflow: 'hidden', 
+                transition: 'all 0.3s ease',
+                border: isActive ? '1px solid #6366f1' : '1px solid rgba(255,255,255,0.5)'
+              }}
+            >
+              {/* Header (Clickable) */}
+              <div 
+                onClick={() => setActiveDiscussion(isActive ? null : d._id)}
+                style={{ 
+                  padding: '20px', 
+                  cursor: 'pointer', 
+                  background: isActive ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
+                <div>
+                  <h3 style={{ margin: '0 0 5px 0', color: '#1e1b4b' }}>{d.title}</h3>
+                  <p style={{ margin: 0, color: '#6b7280', fontSize: '0.9rem' }}>
+                    Posted by <strong>{d.author?.name || 'User'}</strong> • {d.replies.length} replies
                   </p>
-                ))}
-                
-                {/* Add Reply Input */}
-                <div style={{ marginTop: '10px', display: 'flex' }}>
-                  <input 
-                    placeholder="Write a reply..." 
-                    value={replyText} 
-                    onChange={(e) => setReplyText(e.target.value)} 
-                    style={{ flex: 1, padding: '5px' }}
-                  />
-                  <button onClick={() => handleReplySubmit(d._id)} style={{ background: 'orange', border: 'none', padding: '5px 10px' }}>
-                    Reply
-                  </button>
+                </div>
+                <div style={{ fontSize: '1.2rem', color: '#6b7280' }}>
+                  {isActive ? '−' : '+'}
                 </div>
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* Expanded Content */}
+              {isActive && (
+                <div style={{ padding: '0 20px 20px 20px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                  <p style={{ fontSize: '1rem', lineHeight: '1.6', color: '#374151', margin: '20px 0' }}>
+                    {d.content}
+                  </p>
+
+                  {/* Replies List */}
+                  <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: '12px', padding: '15px', marginBottom: '20px' }}>
+                    <h4 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', color: '#6b7280', textTransform: 'uppercase' }}>Replies</h4>
+                    {d.replies.length === 0 ? (
+                      <p style={{ fontStyle: 'italic', color: '#9ca3af', fontSize: '0.9rem' }}>No replies yet. Be the first!</p>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        {d.replies.map((r, idx) => (
+                          <div key={idx} style={{ paddingBottom: '10px', borderBottom: idx !== d.replies.length - 1 ? '1px solid #e5e7eb' : 'none' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                              <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#c7d2fe', color: '#4338ca', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                                U
+                              </div>
+                              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>User</span>
+                              <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '0.95rem', color: '#4b5563', paddingLeft: '32px' }}>{r.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reply Input */}
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <input 
+                      className="form-input"
+                      style={{ marginBottom: 0, background: 'white' }}
+                      placeholder="Write a reply..." 
+                      value={replyText} 
+                      onChange={(e) => setReplyText(e.target.value)} 
+                    />
+                    <button onClick={() => handleReplySubmit(d._id)} className="btn btn-primary">
+                      Reply
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

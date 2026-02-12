@@ -1,18 +1,25 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  skills: [String],        // What they can teach
-  interests: [String],     // What they want to learn
-  reputation: { type: Number, default: 0 }
+  skills: [String],
+  interests: [String],
+  reputation: { type: Number, default: 0 },
+
+  otp: { type: String },
+  otpExpires: { type: Date }
 }, { timestamps: true });
 
-// Password hashing middleware
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) next();
+/*
+  PASSWORD HASHING MIDDLEWARE
+  Runs ONLY when password is modified
+*/
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
