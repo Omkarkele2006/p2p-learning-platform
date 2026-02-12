@@ -6,7 +6,7 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [matches, setMatches] = useState([]);
   const [editing, setEditing] = useState(false);
-  
+
   // Form State for updates
   const [skills, setSkills] = useState('');
   const [interests, setInterests] = useState('');
@@ -21,7 +21,7 @@ const Dashboard = () => {
         setUser(data);
         setSkills(data.skills.join(', '));
         setInterests(data.interests.join(', '));
-        
+
         // If we have interests, try to find matches
         if (data.interests.length > 0) {
           const matchRes = await api.get('/users/matches');
@@ -50,11 +50,11 @@ const Dashboard = () => {
         skills: skillArray,
         interests: interestArray
       });
-      
+
       setUser(data);
       setEditing(false);
       alert("Profile Updated!");
-      
+
       // Refresh matches after update
       const matchRes = await api.get('/users/matches');
       setMatches(matchRes.data);
@@ -83,18 +83,18 @@ const Dashboard = () => {
           <form onSubmit={handleUpdate}>
             <div style={{ marginBottom: '10px' }}>
               <label><strong>Skills (comma separated):</strong></label>
-              <input 
-                value={skills} 
-                onChange={(e) => setSkills(e.target.value)} 
+              <input
+                value={skills}
+                onChange={(e) => setSkills(e.target.value)}
                 style={{ width: '100%', padding: '8px' }}
                 placeholder="e.g. React, C++, Python"
               />
             </div>
             <div style={{ marginBottom: '10px' }}>
               <label><strong>I want to learn (comma separated):</strong></label>
-              <input 
-                value={interests} 
-                onChange={(e) => setInterests(e.target.value)} 
+              <input
+                value={interests}
+                onChange={(e) => setInterests(e.target.value)}
                 style={{ width: '100%', padding: '8px' }}
                 placeholder="e.g. Node.js, AI, DevOps"
               />
@@ -114,20 +114,39 @@ const Dashboard = () => {
       {/* Matches Section */}
       <div style={{ marginTop: '30px' }}>
         <h2>Recommended Mentors 🎯</h2>
-        {matches.length === 0 ? (
-          <p>No matches found yet. Update your interests or wait for more users!</p>
-        ) : (
-          <div style={{ display: 'grid', gap: '10px' }}>
-            {matches.map(match => (
-              <div key={match._id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
+        {matches.map(match => {
+          // Simple "AI" Scoring Logic
+          // 1. Count how many skills they have that match your interests
+          const commonTags = match.skills.filter(skill => user.interests.includes(skill));
+
+          // 2. Calculate Percentage (Arbitrary weight: 1 match = 50%, 2+ = 100%)
+          const matchScore = Math.min(commonTags.length * 50, 100);
+
+          return (
+            <div key={match._id} className="card">
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <h3>{match.name}</h3>
-                <p>Can teach: <strong>{match.skills.join(', ')}</strong></p>
-                <p>Reputation: ⭐ {match.reputation || 0}</p>
-                <button style={{ background: '#007bff', color: 'white' }}>Request Session</button>
+                {/* The Badge */}
+                <span style={{
+                  background: matchScore > 80 ? 'green' : 'orange',
+                  color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.8rem'
+                }}>
+                  {matchScore}% Match
+                </span>
               </div>
-            ))}
-          </div>
-        )}
+
+              <p style={{ margin: '10px 0' }}>Can teach: {match.skills.map(s => (
+                <span key={s} className="badge">{s}</span>
+              ))}</p>
+
+              <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                Based on your interest in: <strong>{commonTags.join(', ')}</strong>
+              </p>
+
+              <button style={{ width: '100%', marginTop: '10px' }}>Request Session</button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
