@@ -51,7 +51,7 @@ exports.githubLogin = async (req, res) => {
       user = await User.create({
         name: githubUser.name || githubUser.login, // GitHub 'name' can be null
         email: primaryEmail,
-        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10), // Random password
+        password: Math.random().toString(36).slice(-8), // Random password
         skills: [],
         interests: []
       });
