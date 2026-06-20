@@ -59,7 +59,7 @@ const Login = () => {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <h2 className="auth-title" style={{ color: '#1e1b4b' }}>Welcome Back</h2>
+        <h2 className="auth-title">Welcome Back</h2>
         <p className="auth-subtitle">Sign in to continue your learning journey</p>
 
         {error && <div className="error-box">{error}</div>}
@@ -68,6 +68,7 @@ const Login = () => {
           <div className="input-group">
             {/* The placeholder=" " is CRITICAL for your CSS to work */}
             <input
+              id="login-email"
               type="email"
               name="email"
               placeholder=" " 
@@ -75,11 +76,12 @@ const Login = () => {
               onChange={handleChange}
               required
             />
-            <label>Email Address</label>
+            <label htmlFor="login-email">Email Address</label>
           </div>
 
           <div className="input-group">
             <input
+              id="login-password"
               type="password"
               name="password"
               placeholder=" "
@@ -87,7 +89,7 @@ const Login = () => {
               onChange={handleChange}
               required
             />
-            <label>Password</label>
+            <label htmlFor="login-password">Password</label>
           </div>
 
           <div style={{ textAlign: 'right', marginBottom: '15px', fontSize: '0.85rem' }}>
@@ -97,7 +99,12 @@ const Login = () => {
           </div>
 
           <button className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? (
+              <>
+                <div className="spinner spinner-sm" style={{ borderLeftColor: 'white', marginRight: '8px' }}></div>
+                Signing In...
+              </>
+            ) : 'Sign In'}
           </button>
         </form>
 

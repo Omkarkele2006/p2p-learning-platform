@@ -12,25 +12,65 @@ import { Toaster } from 'react-hot-toast';
 // Professional Navbar Component
 const Navbar = () => {
   const location = useLocation();
-  const isActive = (path) => location.pathname === path ? { color: '#6366f1' } : {};
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+  const initials = user && user.name 
+    ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() 
+    : 'U';
 
   return (
-    <nav className="navbar">
-      <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#6366f1' }}>
-        P2P<span style={{ color: '#1e1b4b' }}>Learn</span>
-      </div>
-      <div className="nav-links">
-        <Link to="/dashboard" className="nav-link" style={isActive('/dashboard')}>Dashboard</Link>
-        <Link to="/resources" className="nav-link" style={isActive('/resources')}>Resources</Link>
-        <Link to="/forum" className="nav-link" style={isActive('/forum')}>Community</Link>
-      </div>
-      <button 
-        onClick={() => {localStorage.clear(); window.location.href='/login'}} 
-        className="btn btn-logout"
-      >
-        Logout
-      </button>
-    </nav>
+    <div className="navbar-wrapper">
+      <nav className="navbar">
+        <div style={{ fontWeight: 'bold', fontSize: '1.4rem', color: 'var(--primary)' }}>
+          P2P<span style={{ color: 'var(--dark-indigo)' }}>Learn</span>
+        </div>
+        
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          <Link 
+            to="/dashboard" 
+            className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+            onClick={() => setMenuOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <Link 
+            to="/resources" 
+            className={`nav-link ${location.pathname === '/resources' ? 'active' : ''}`}
+            onClick={() => setMenuOpen(false)}
+          >
+            Resources
+          </Link>
+          <Link 
+            to="/forum" 
+            className={`nav-link ${location.pathname === '/forum' ? 'active' : ''}`}
+            onClick={() => setMenuOpen(false)}
+          >
+            Community
+          </Link>
+        </div>
+
+        <div className="nav-profile-section">
+          {user && <div className="avatar-circle" title={user.name}>{initials}</div>}
+          <button 
+            onClick={() => {localStorage.clear(); window.location.href='/login'}} 
+            className="btn btn-logout"
+            style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+          >
+            Logout
+          </button>
+          
+          <button 
+            className="nav-toggle" 
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+          >
+            ☰
+          </button>
+        </div>
+      </nav>
+    </div>
   );
 };
 

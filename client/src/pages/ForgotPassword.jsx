@@ -62,42 +62,58 @@ const ForgotPassword = () => {
           <form onSubmit={sendOtp} className="auth-form">
             <div className="input-group">
               <input 
+                id="forgot-email"
                 type="email" 
                 placeholder=" " 
+                className="form-input"
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
                 required 
               />
-              <label>Email Address</label>
+              <label htmlFor="forgot-email">Email Address</label>
             </div>
-            <button className="btn-primary" disabled={loading}>
-              {loading ? 'Sending...' : 'Send OTP'}
+            <button className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
+              {loading ? (
+                <>
+                  <div className="spinner spinner-sm" style={{ borderLeftColor: 'white', marginRight: '8px' }}></div>
+                  Sending OTP...
+                </>
+              ) : 'Send OTP'}
             </button>
           </form>
         ) : (
           <form onSubmit={resetPassword} className="auth-form">
             <div className="input-group">
               <input 
+                id="forgot-otp"
                 type="text" 
                 placeholder=" " 
+                className="form-input"
                 value={otp} 
                 onChange={(e) => setOtp(e.target.value)} 
                 required 
               />
-              <label>Enter 6-digit OTP</label>
+              <label htmlFor="forgot-otp">Enter 6-digit OTP</label>
             </div>
             <div className="input-group">
               <input 
+                id="forgot-new-password"
                 type="password" 
                 placeholder=" " 
+                className="form-input"
                 value={newPassword} 
                 onChange={(e) => setNewPassword(e.target.value)} 
                 required 
               />
-              <label>New Password</label>
+              <label htmlFor="forgot-new-password">New Password</label>
             </div>
-            <button className="btn-primary" disabled={loading}>
-              {loading ? 'Resetting...' : 'Reset Password'}
+            <button className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
+              {loading ? (
+                <>
+                  <div className="spinner spinner-sm" style={{ borderLeftColor: 'white', marginRight: '8px' }}></div>
+                  Resetting...
+                </>
+              ) : 'Reset Password'}
             </button>
           </form>
         )}
