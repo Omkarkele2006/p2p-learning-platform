@@ -1,9 +1,10 @@
 const User = require('../models/User');
+const asyncHandler = require('../utils/asyncHandler');
 
 // @desc    Update user profile (Skills/Interests)
 // @route   PUT /api/users/profile
 // @access  Private
-exports.updateUserProfile = async (req, res) => {
+exports.updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -20,31 +21,27 @@ exports.updateUserProfile = async (req, res) => {
   } else {
     res.status(404).json({ message: 'User not found' });
   }
-};
+});
 
 // @desc    Find peers based on user's interests
 // @route   GET /api/users/matches
 // @access  Private
-exports.getPeerMatches = async (req, res) => {
-  try {
-    const userInterests = req.user.interests; // Get what the logged-in user wants to learn
+exports.getPeerMatches = asyncHandler(async (req, res) => {
+  const userInterests = req.user.interests; // Get what the logged-in user wants to learn
 
-    // Find other users who have at least one of these interests in their SKILLS array
-    const matches = await User.find({
-      skills: { $in: userInterests },
-      _id: { $ne: req.user._id } // Don't match the user with themselves!
-    }).select('name email skills reputation');
+  // Find other users who have at least one of these interests in their SKILLS array
+  const matches = await User.find({
+    skills: { $in: userInterests },
+    _id: { $ne: req.user._id } // Don't match the user with themselves!
+  }).select('name email skills reputation');
 
-    res.json(matches);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+  res.json(matches);
+});
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
-exports.getUserProfile = async (req, res) => {
+exports.getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
     res.json({
@@ -58,4 +55,4 @@ exports.getUserProfile = async (req, res) => {
   } else {
     res.status(404).json({ message: 'User not found' });
   }
-};
+});

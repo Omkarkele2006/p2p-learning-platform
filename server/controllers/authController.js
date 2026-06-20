@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
 const sendEmail = require('../utils/sendEmail');
+const asyncHandler = require('../utils/asyncHandler');
 // Generate Token helper function
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -11,7 +12,7 @@ const generateToken = (id) => {
 
 // @desc    Login with GitHub
 // @route   POST /api/auth/github
-exports.githubLogin = async (req, res) => {
+exports.githubLogin = asyncHandler(async (req, res) => {
   const { code } = req.body;
 
   try {
@@ -69,29 +70,25 @@ exports.githubLogin = async (req, res) => {
     console.error("GitHub Login Error:", error.response?.data || error.message);
     res.status(500).json({ message: 'GitHub Login Failed' });
   }
-};
+});
 
-exports.registerUser = async (req, res) => {
+exports.registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  try {
-    const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: 'User already exists' });
+  const userExists = await User.findOne({ email });
+  if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-    const user = await User.create({ name, email, password });
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+  const user = await User.create({ name, email, password });
+  res.status(201).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    token: generateToken(user._id),
+  });
+});
 
 // @desc    Forgot Password - Send OTP
 // @route   POST /api/auth/forgot-password
-exports.forgotPassword = async (req, res) => {
+exports.forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -121,55 +118,46 @@ exports.forgotPassword = async (req, res) => {
     console.error("Email Error:", error);
     res.status(500).json({ message: 'Email could not be sent' });
   }
-};
+});
 
 
 // @desc    Reset Password
 // @route   POST /api/auth/reset-password
-exports.resetPassword = async (req, res) => {
+exports.resetPassword = asyncHandler(async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
-  try {
-    const user = await User.findOne({
-      email,
-      otp,
-      otpExpires: { $gt: Date.now() }
-    });
+  const user = await User.findOne({
+    email,
+    otp,
+    otpExpires: { $gt: Date.now() }
+  });
 
-    if (!user)
-      return res.status(400).json({ message: 'Invalid or Expired OTP' });
+  if (!user)
+    return res.status(400).json({ message: 'Invalid or Expired OTP' });
 
-    user.password = newPassword;
-    user.otp = undefined;
-    user.otpExpires = undefined;
+  user.password = newPassword;
+  user.otp = undefined;
+  user.otpExpires = undefined;
 
-    await user.save(); // Middleware hashes password
+  await user.save(); // Middleware hashes password
 
-    res.json({ message: 'Password Reset Successful' });
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+  res.json({ message: 'Password Reset Successful' });
+});
 
 
-exports.loginUser = async (req, res) => {
+exports.loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-    // Compare entered password with hashed password in DB
-    if (user && (await bcrypt.compare(password, user.password))) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  // Compare entered password with hashed password in DB
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(401).json({ message: 'Invalid email or password' });
   }
-};
+});
