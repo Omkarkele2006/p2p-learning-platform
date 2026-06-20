@@ -49,6 +49,7 @@ const ForgotPassword = () => {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
+        <img src="/p2pl.jpg" alt="P2PLearn Logo" className="brand-logo-auth" />
         <h2 className="auth-title">
           {step === 1 ? 'Reset Password' : 'Verify OTP'}
         </h2>

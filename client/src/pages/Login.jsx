@@ -59,6 +59,7 @@ const Login = () => {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
+        <img src="/p2pl.jpg" alt="P2PLearn Logo" className="brand-logo-auth" />
         <h2 className="auth-title">Welcome Back</h2>
         <p className="auth-subtitle">Sign in to continue your learning journey</p>
 

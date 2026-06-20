@@ -93,9 +93,10 @@ const Landing = () => {
         <header className="landing-navbar">
           <div 
             onClick={() => handleScroll('home')} 
-            style={{ fontWeight: 'bold', fontSize: '1.4rem', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+            style={{ fontWeight: 'bold', fontSize: '1.4rem', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}
           >
-            P2P<span style={{ color: '#ffffff' }}>Learn</span>
+            <img src="/p2pl.jpg" alt="P2PLearn Logo" className="brand-logo-landing" />
+            <span>P2P<span style={{ color: '#ffffff' }}>Learn</span></span>
           </div>
 
           <nav className="landing-nav-links">

@@ -25,8 +25,9 @@ const Navbar = () => {
   return (
     <div className="navbar-wrapper">
       <nav className="navbar">
-        <div style={{ fontWeight: 'bold', fontSize: '1.4rem', color: 'var(--primary)' }}>
-          P2P<span style={{ color: 'var(--dark-indigo)' }}>Learn</span>
+        <div style={{ fontWeight: 'bold', fontSize: '1.4rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+          <img src="/p2pl.jpg" alt="P2PLearn Logo" className="brand-logo-app" />
+          <span>P2P<span style={{ color: 'var(--dark-indigo)' }}>Learn</span></span>
         </div>
         
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>

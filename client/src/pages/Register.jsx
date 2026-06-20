@@ -56,6 +56,7 @@ const Register = () => {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
+        <img src="/p2pl.jpg" alt="P2PLearn Logo" className="brand-logo-auth" />
         <h2 className="auth-title">Create Account</h2>
         <p className="auth-subtitle">Join the peer learning community today</p>
         

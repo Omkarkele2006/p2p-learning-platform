@@ -1023,3 +1023,48 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     text-align: center;
   }
 }
+
+/* --- BRAND LOGO STYLES --- */
+.brand-logo-landing {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast);
+}
+
+.brand-logo-landing:hover {
+  transform: scale(1.05);
+}
+
+.brand-logo-app {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.brand-logo-auth {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);
+}
+
+@media (max-width: 600px) {
+  .brand-logo-landing {
+    height: 36px;
+  }
+  .brand-logo-app {
+    height: 28px;
+  }
+  .brand-logo-auth {
+    height: 64px;
+    margin-bottom: var(--space-sm);
+  }
+}
