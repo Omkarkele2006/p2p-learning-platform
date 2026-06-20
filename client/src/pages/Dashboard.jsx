@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -42,8 +43,10 @@ const Dashboard = () => {
       setEditing(false);
       const matchRes = await api.get('/users/matches');
       setMatches(matchRes.data);
+      toast.success("Profile updated successfully!");
     } catch (err) {
-      alert("Update failed");
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || "Update failed";
+      toast.error(errMsg);
     }
   };
 

@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Resources from './pages/Resources';
 import Forum from './pages/Forum';
 import ProtectedRoute from './components/ProtectedRoute';
+import { Toaster } from 'react-hot-toast';
 
 // Professional Navbar Component
 const Navbar = () => {
@@ -42,6 +43,7 @@ const Layout = ({ children }) => {
   
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       {token && !isAuthPage && <Navbar />}
       {children}
     </>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { toast } from 'react-hot-toast';
 
 const Forum = () => {
   const [discussions, setDiscussions] = useState([]);
@@ -13,7 +14,7 @@ const Forum = () => {
       const { data } = await api.get('/discussions');
       setDiscussions(data);
     } catch (err) {
-      alert('Failed to load forum');
+      toast.error('Failed to load forum');
     }
   };
 
@@ -25,9 +26,11 @@ const Forum = () => {
     try {
       await api.post('/discussions', newPost);
       setNewPost({ title: '', content: '' });
+      toast.success('Discussion created!');
       fetchDiscussions();
     } catch (err) {
-      alert('Failed to post');
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Failed to post';
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
@@ -38,9 +41,11 @@ const Forum = () => {
     try {
       await api.post(`/discussions/${id}/reply`, { text: replyText });
       setReplyText('');
+      toast.success('Reply posted!');
       fetchDiscussions();
     } catch (err) {
-      alert('Failed to reply');
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Failed to reply';
+      toast.error(errMsg);
     }
   };
 

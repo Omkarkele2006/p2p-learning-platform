@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api';
+import api from '../api/axios';
+import { toast } from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -18,12 +17,14 @@ const Login = () => {
 
   const handleGithubLogin = async (code) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/github`, { code });
+      const res = await api.post('/auth/github', { code });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data));
+      toast.success('Login successful!');
       navigate('/dashboard');
     } catch {
       setError('GitHub Login Failed');
+      toast.error('GitHub Login Failed');
     }
   };
 
@@ -41,12 +42,15 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, formData);
+      const res = await api.post('/auth/login', formData);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data));
+      toast.success('Login successful!');
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Login failed';
+      setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }

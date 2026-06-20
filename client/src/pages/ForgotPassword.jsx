@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -18,9 +19,11 @@ const ForgotPassword = () => {
     try {
       await api.post('/auth/forgot-password', { email });
       setStep(2);
-      alert('OTP sent to your email!');
+      toast.success('OTP sent to your email!');
     } catch (err) {
-      setError(err.response?.data?.message || 'User not found');
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'User not found';
+      setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
@@ -32,10 +35,12 @@ const ForgotPassword = () => {
     setError('');
     try {
       await api.post('/auth/reset-password', { email, otp, newPassword });
-      alert('Password Reset Successful! Please Login.');
+      toast.success('Password Reset Successful! Please Login.');
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid or Expired OTP');
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Invalid or Expired OTP';
+      setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }

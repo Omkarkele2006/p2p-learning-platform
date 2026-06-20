@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { toast } from 'react-hot-toast';
 
 const Resources = () => {
   const [resources, setResources] = useState([]);
@@ -12,7 +13,7 @@ const Resources = () => {
       const { data } = await api.get('/resources');
       setResources(data);
     } catch (err) {
-      alert('Failed to fetch resources');
+      toast.error('Failed to fetch resources');
     }
   };
 
@@ -28,11 +29,12 @@ const Resources = () => {
       const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
       await api.post('/resources', { ...formData, tags: tagsArray });
       
-      alert('Resource Uploaded!');
+      toast.success('Resource Uploaded!');
       setFormData({ title: '', description: '', link: '', type: 'Video', tags: '' });
       fetchResources();
     } catch (err) {
-      alert('Upload failed');
+      const errMsg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Upload failed';
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
