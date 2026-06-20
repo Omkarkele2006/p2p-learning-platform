@@ -6,6 +6,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Resources from './pages/Resources';
 import Forum from './pages/Forum';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Professional Navbar Component
 const Navbar = () => {
@@ -58,9 +59,9 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
           {/* Protected Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/forum" element={<Forum />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
+          <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
         </Routes>
       </Layout>
     </Router>
