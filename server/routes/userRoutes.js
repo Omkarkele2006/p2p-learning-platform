@@ -5,10 +5,14 @@ const {
   getPeerMatches, 
   getUserProfile,
   getUserActivitySummary,
-  getUserRecentActivity
+  getUserRecentActivity,
+  getPublicStats
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 const { validate, updateProfileRules } = require('../middleware/validationMiddleware');
+
+// Public platform metrics
+router.route('/public-stats').get(getPublicStats);
 
 // Profile routes
 router.route('/profile')

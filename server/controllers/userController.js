@@ -184,3 +184,20 @@ exports.getUserRecentActivity = asyncHandler(async (req, res) => {
 
   res.json(allActivities);
 });
+
+// @desc    Get public statistics
+// @route   GET /api/users/public-stats
+// @access  Public
+exports.getPublicStats = asyncHandler(async (req, res) => {
+  const activeLearners = await User.countDocuments({});
+  const resourcesShared = await Resource.countDocuments({});
+  const discussionsCreated = await Discussion.countDocuments({});
+  const mentorConnections = await User.countDocuments({ skills: { $exists: true, $ne: [] } });
+
+  res.json({
+    activeLearners,
+    resourcesShared,
+    discussionsCreated,
+    mentorConnections
+  });
+});

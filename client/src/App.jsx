@@ -1,5 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import Landing from './pages/Landing';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -74,17 +77,18 @@ const Navbar = () => {
   );
 };
 
-// Layout Wrapper to show Navbar only when logged in
+// Layout Wrapper to show Navbar only when logged in on app pages
 const Layout = ({ children }) => {
   const token = localStorage.getItem('token');
   const location = useLocation();
-  // Don't show navbar on auth pages
-  const isAuthPage = ['/login', '/register', '/forgot-password'].includes(location.pathname);
+  
+  // Only show navbar on app dashboard/resources/forum pages
+  const isAppPage = ['/dashboard', '/resources', '/forum'].includes(location.pathname);
   
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      {token && !isAuthPage && <Navbar />}
+      {token && isAppPage && <Navbar />}
       {children}
     </>
   );
@@ -95,7 +99,9 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
