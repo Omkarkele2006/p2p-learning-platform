@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   skills: [String],
   interests: [String],
   reputation: { type: Number, default: 0 },
+  bio: { type: String, default: "" },
 
   otp: { type: String },
   otpExpires: { type: Date }

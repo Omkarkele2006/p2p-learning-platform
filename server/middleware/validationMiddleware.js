@@ -88,7 +88,12 @@ const updateProfileRules = [
         return array.map(val => (typeof val === 'string' ? val.trim() : val));
       }
       return array;
-    })
+    }),
+  body('bio')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Bio must not exceed 500 characters')
 ];
 
 const createResourceRules = [
