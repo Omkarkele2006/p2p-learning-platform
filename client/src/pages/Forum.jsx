@@ -109,7 +109,7 @@ const Forum = () => {
                 <div>
                   <h3 style={{ margin: '0 0 5px 0', color: '#1e1b4b' }}>{d.title}</h3>
                   <p style={{ margin: 0, color: '#6b7280', fontSize: '0.9rem' }}>
-                    Posted by <strong>{d.author?.name || 'User'}</strong> • {d.replies.length} replies
+                    Posted by <strong>{d.author?.name || 'Unknown User'}</strong> • {d.replies.length} replies
                   </p>
                 </div>
                 <div style={{ fontSize: '1.2rem', color: '#6b7280' }}>
@@ -135,9 +135,9 @@ const Forum = () => {
                           <div key={idx} style={{ paddingBottom: '10px', borderBottom: idx !== d.replies.length - 1 ? '1px solid #e5e7eb' : 'none' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                               <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#c7d2fe', color: '#4338ca', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                                U
+                                {(r.user?.name || 'Unknown User')[0].toUpperCase()}
                               </div>
-                              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>User</span>
+                              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{r.user?.name || 'Unknown User'}</span>
                               <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
                             </div>
                             <p style={{ margin: 0, fontSize: '0.95rem', color: '#4b5563', paddingLeft: '32px' }}>{r.text}</p>

@@ -12,6 +12,7 @@ exports.createDiscussion = asyncHandler(async (req, res) => {
     resourceId: resourceId || null, // Optional
     author: req.user._id
   });
+  await discussion.populate('author', 'name reputation');
   res.status(201).json(discussion);
 });
 
@@ -22,6 +23,7 @@ exports.getAllDiscussions = asyncHandler(async (req, res) => {
   const discussions = await Discussion.find()
     .populate('author', 'name reputation') // Show who asked
     .populate('resourceId', 'title')       // Show linked resource name
+    .populate('replies.user', 'name')
     .sort({ createdAt: -1 });
 
   res.json(discussions);
@@ -44,6 +46,8 @@ exports.addReply = asyncHandler(async (req, res) => {
 
   discussion.replies.push(reply);
   await discussion.save();
+
+  await discussion.populate('replies.user', 'name');
 
   res.status(201).json(discussion.replies);
 });
