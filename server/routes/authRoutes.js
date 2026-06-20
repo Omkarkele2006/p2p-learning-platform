@@ -7,11 +7,18 @@ const {
   resetPassword, 
   githubLogin // <--- IMPORT THIS
 } = require('../controllers/authController');
+const {
+  validate,
+  registerRules,
+  loginRules,
+  forgotPasswordRules,
+  resetPasswordRules
+} = require('../middleware/validationMiddleware');
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.post('/register', validate(registerRules), registerUser);
+router.post('/login', validate(loginRules), loginUser);
+router.post('/forgot-password', validate(forgotPasswordRules), forgotPassword);
+router.post('/reset-password', validate(resetPasswordRules), resetPassword);
 
 // --- NEW GITHUB ROUTE ---
 router.post('/github', githubLogin); 
