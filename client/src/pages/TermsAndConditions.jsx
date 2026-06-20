@@ -42,6 +42,14 @@ const TermsAndConditions = () => {
           <p>
             You retain ownership of any resources or topics you post. However, by uploading content, you grant the platform a license to display, distribute, and index your materials for collaborative peer learning functions.
           </p>
+          <h2 style={{ color: 'var(--dark-indigo)', fontSize: '1.3rem', fontWeight: 700, marginTop: 'var(--space-md)' }}>4. Service Availability</h2>
+          <p>
+            While we aim to keep the platform available and reliable, we do not guarantee uninterrupted access. Features may be updated, modified, or temporarily unavailable during maintenance.
+          </p>
+          <h2 style={{ color: 'var(--dark-indigo)', fontSize: '1.3rem', fontWeight: 700, marginTop: 'var(--space-md)' }}>5. Educational Purpose</h2>
+          <p>
+           This platform is intended for collaborative learning and knowledge sharing. Information shared by users should not be considered professional, academic, legal, or career advice.
+          </p>
         </div>
       </div>
     </div>

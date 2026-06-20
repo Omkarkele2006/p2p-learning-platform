@@ -6,6 +6,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes'); // Add this for Day 2
 const resourceRoutes = require('./routes/resourceRoutes');
 const discussionRoutes = require('./routes/discussionRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 const errorMiddleware = require('./middleware/errorMiddleware');
 
 connectDB();
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/discussions', discussionRoutes);
+app.use('/api/contact', contactRoutes);
 
 // --- ERROR MIDDLEWARE (MUST BE AFTER ROUTES) ---
 app.use(errorMiddleware);

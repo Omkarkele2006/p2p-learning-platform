@@ -42,6 +42,9 @@ const PrivacyPolicy = () => {
           <p>
             We deploy secure encryption protocols to protect passwords and profile metadata. Your personal data is stored as long as your account remains active on the platform. You may edit or remove your profile information at any time.
           </p>
+          <h2 style={{ color: 'var(--dark-indigo)', fontSize: '1.3rem', fontWeight: 700, marginTop: 'var(--space-md)' }}>4. Third-Party Services</h2>
+          <p>
+The platform may use third-party services such as GitHub OAuth, MongoDB Atlas, and email providers to support authentication and platform functionality. These services may process limited information as required to provide their services.          </p>
         </div>
       </div>
     </div>

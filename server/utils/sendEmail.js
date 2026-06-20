@@ -15,7 +15,7 @@ const sendEmail = async (options) => {
       to: options.email,
       subject: options.subject,
       text: options.message,
-      html: `
+      html: options.html || `
         <div style="font-family: Arial; padding: 20px;">
           <h2>Password Reset</h2>
           <p>${options.message}</p>

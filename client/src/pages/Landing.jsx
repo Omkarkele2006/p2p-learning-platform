@@ -67,14 +67,19 @@ const Landing = () => {
     fetchStats();
   }, []);
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     setSubmittingContact(true);
-    setTimeout(() => {
-      toast.success("Thank you for reaching out! Your message was sent.");
+    try {
+      await api.post('/contact', contactData);
+      toast.success("Thank you for reaching out! Your message has been sent.");
       setContactData({ name: '', email: '', message: '' });
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || "Failed to send message. Please try again.";
+      toast.error(errorMsg);
+    } finally {
       setSubmittingContact(false);
-    }, 800);
+    }
   };
 
   const handleScroll = (id) => {
@@ -176,21 +181,108 @@ const Landing = () => {
           <div className="hero-mockup">
             <div style={{ display: 'flex', width: '100%', height: '100%', paddingTop: '30px' }}>
               {/* Mock Sidebar */}
-              <div style={{ width: '22%', background: '#f8fafc', borderRight: '1px solid rgba(0,0,0,0.05)', padding: '20px 10px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ height: '12px', width: '75%', background: '#e2e8f0', borderRadius: '3px' }}></div>
-                <div style={{ height: '12px', width: '60%', background: '#cbd5e1', borderRadius: '3px' }}></div>
-                <div style={{ height: '12px', width: '65%', background: '#cbd5e1', borderRadius: '3px' }}></div>
+              <div style={{ width: '22%', background: '#f8fafc', borderRight: '1px solid rgba(0,0,0,0.05)', padding: '20px 10px', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+                {/* Active Brand item */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(99, 102, 241, 0.1)', padding: '6px 10px', borderRadius: '4px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }}></div>
+                  <div style={{ height: '8px', width: '60px', background: 'var(--primary)', borderRadius: '2px' }}></div>
+                </div>
+                {/* Other Nav items */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 10px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#cbd5e1' }}></div>
+                  <div style={{ height: '8px', width: '50px', background: '#cbd5e1', borderRadius: '2px' }}></div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 10px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#cbd5e1' }}></div>
+                  <div style={{ height: '8px', width: '55px', background: '#cbd5e1', borderRadius: '2px' }}></div>
+                </div>
               </div>
-              {/* Mock Content */}
-              <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div style={{ height: '30px', width: '40%', background: 'rgba(99, 102, 241, 0.15)', borderRadius: '6px' }}></div>
-                <div style={{ display: 'flex', gap: '15px', height: '100%' }}>
-                  <div style={{ flex: 1, background: '#f1f5f9', borderRadius: '8px', border: '1px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>
-                    Activity Tracker 📊
+              
+              {/* Mock Main Dashboard View */}
+              <div style={{ flex: 1, padding: '15px 20px', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+                {/* Mock Header Greeting */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--dark-indigo)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      Welcome back, Om! 👋
+                      <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--secondary)', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '10px' }}>Contributor</span>
+                    </div>
+                    <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginTop: '2px' }}>Here is your activity overview for today.</div>
                   </div>
-                  <div style={{ flex: 1, background: '#f1f5f9', borderRadius: '8px', border: '1px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>
-                    Mentor Matches 🤝
+                  <div style={{ background: '#e0e7ff', color: 'var(--primary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 700 }}>
+                    ⭐ 148 Rep
                   </div>
+                </div>
+
+                {/* Grid Content */}
+                <div style={{ display: 'flex', gap: '12px', flex: 1, minHeight: 0 }}>
+                  
+                  {/* Left Mock Panel: Completion & Activity */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {/* Mock Progress Card */}
+                    <div style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '6px', padding: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-main)' }}>
+                        <span>Profile Completion</span>
+                        <span style={{ color: '#047857' }}>80%</span>
+                      </div>
+                      <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: '80%', background: 'linear-gradient(90deg, #34d399, #10b981)', borderRadius: '3px' }}></div>
+                      </div>
+                    </div>
+
+                    {/* Mock Activity List */}
+                    <div style={{ flex: 1, background: '#ffffff', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '6px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '2px' }}>
+                        Recent Activity
+                      </div>
+                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75rem' }}>📚</span>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--text-main)' }}>
+                          Shared: <strong>JS Interview Guide</strong>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75rem' }}>💬</span>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--text-main)' }}>
+                          Created: <strong>React Routing</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Mock Panel: Mentors Matching */}
+                  <div style={{ flex: 1, background: '#ffffff', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '6px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '2px' }}>
+                      Recommended Mentors
+                    </div>
+                    {/* Mentor Card 1 */}
+                    <div style={{ background: '#f8fafc', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '4px', padding: '6px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--dark-indigo)' }}>Kaustubh Mukdam</div>
+                        <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>
+                          <span style={{ fontSize: '0.5rem', background: '#dcfce7', color: '#166534', padding: '1px 4px', borderRadius: '3px' }}>React</span>
+                          <span style={{ fontSize: '0.5rem', background: '#cbd5e1', color: '#334155', padding: '1px 4px', borderRadius: '3px' }}>CSS</span>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#15803d', background: '#dcfce7', padding: '2px 6px', borderRadius: '10px' }}>
+                        95% Match
+                      </span>
+                    </div>
+                    {/* Mentor Card 2 */}
+                    <div style={{ background: '#f8fafc', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '4px', padding: '6px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--dark-indigo)' }}>Ryan Dahl</div>
+                        <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>
+                          <span style={{ fontSize: '0.5rem', background: '#f3e8ff', color: '#6b21a8', padding: '1px 4px', borderRadius: '3px' }}>Node</span>
+                          <span style={{ fontSize: '0.5rem', background: '#cbd5e1', color: '#334155', padding: '1px 4px', borderRadius: '3px' }}>Git</span>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#15803d', background: '#dcfce7', padding: '2px 6px', borderRadius: '10px' }}>
+                        80% Match
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -326,6 +418,16 @@ const Landing = () => {
           <p style={{ color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.7' }}>
             Whether you want to share a React repository, ask a Mongoose question, or find a Python mentor, our platform provides the tools to measure profile progress, earn reputation badges, and track your achievements.
           </p>
+
+
+           <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--dark-indigo)', marginBottom: 'var(--space-md)', marginTop: 'var(--space-md)' }}>Project Background</h2>
+          <p style={{ color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.7', marginBottom: 'var(--space-md)' }}>
+P2PLearn was developed as part of ASEP (Applied Science and Engineering Project) during the academic year 2024–25 under the Department of Engineering, Sciences and Humanities (DESH), Vishwakarma Institute of Technology (VIT), Pune.          </p>
+          <p style={{ color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.7', fontWeight: 600 }}>
+Project Team: Om Karkele, Kartik Mandhane, Yash Kashid, Siddharth Karle, Kartik Singh, Vedant Kasle          </p>
+          <p style={{ color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.7' , marginTop: 'var(--space-md)'}}>
+Together, the team designed and developed P2PLearn as a full-stack peer-to-peer learning platform focused on connecting students, encouraging knowledge sharing, and building a stronger learning community.          </p>
+
         </div>
       </section>
 
@@ -340,7 +442,7 @@ const Landing = () => {
                 id="contact-name"
                 type="text"
                 className="form-input"
-                placeholder="Jane Doe"
+                placeholder="What should we call you?"
                 value={contactData.name}
                 onChange={(e) => setContactData({...contactData, name: e.target.value})}
                 required
@@ -353,7 +455,7 @@ const Landing = () => {
                 id="contact-email"
                 type="email"
                 className="form-input"
-                placeholder="jane@example.com"
+                placeholder="Enter your email address"
                 value={contactData.email}
                 onChange={(e) => setContactData({...contactData, email: e.target.value})}
                 required

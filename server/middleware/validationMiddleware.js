@@ -148,6 +148,25 @@ const createReplyRules = [
     .withMessage('Content must not exceed 2000 characters')
 ];
 
+const contactRules = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Name is required')
+    .isLength({ min: 2 })
+    .withMessage('Name must be at least 2 characters'),
+  body('email')
+    .isEmail()
+    .withMessage('Must be a valid email')
+    .normalizeEmail(),
+  body('message')
+    .trim()
+    .notEmpty()
+    .withMessage('Message is required')
+    .isLength({ min: 10, max: 2000 })
+    .withMessage('Message must be between 10 and 2000 characters')
+];
+
 module.exports = {
   validate,
   registerRules,
@@ -157,5 +176,7 @@ module.exports = {
   updateProfileRules,
   createResourceRules,
   createDiscussionRules,
-  createReplyRules
+  createReplyRules,
+  contactRules
 };
+
